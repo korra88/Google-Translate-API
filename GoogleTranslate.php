@@ -3,8 +3,8 @@
 /**
  * Google-Translate-API
  * New API Library for Google translate V2 in PHP
- * @link https:// Github.com/korra88/Google-Translate-API
- * @license http:// Www.gnu.org/copyleft/gpl.html
+ * @link https://Github.com/korra88/Google-Translate-API
+ * @license http://Www.gnu.org/copyleft/gpl.html
  * @version 1.1
  * @author Vinicius Gava (gava.vinicius@gmail.com)
  * @author Emanuele Corradini (korra88@gmail.com)
@@ -15,7 +15,7 @@ class GoogleTranslate {
      * URI API
      * @var string
      */
-    private $apiUri = 'https:// Www.googleapis.com/language/translate/v2';
+    private $apiUri = 'https://Www.googleapis.com/language/translate/v2';
 
     /**
      * Access Key to API
@@ -75,7 +75,6 @@ class GoogleTranslate {
      */
     public function translate($text, $targetLanguage, &$sourceLanguage = null) {
         if ($this->isValid($text, $targetLanguage, $sourceLanguage)) {
-            reset($text);
             // Add keyAccess
             $this->addQueryParam('key', $this->accessKey);
             // Add text to be translate
@@ -217,17 +216,20 @@ class GoogleTranslate {
      * @param boolean $targetRequired the target language is required?
      * @return boolean
      */
-    private function isValid(&$text, $targetLanguage = null, $sourceLanguage = null, $targetRequired = true) {
+    private function isValid(& $text, $targetLanguage = null, $sourceLanguage = null, $targetRequired = true) {
+        // Check text/texts
         // In case of numeric only in text, return false
         if (!is_array($text)) {
-            $text = array($text);
-        }
-        // Valid list of translate
-        foreach ($text as $keyText => $oneText) {
-            // Is numeric?
-            if (is_numeric($oneText) || strlen($oneText) < 2) {
-                // Remove from list translate
-                unset($text[$keyText]);
+            if (!is_string($text) || is_numeric($text) || strlen($text) < 2) {
+                return false;
+            }
+        } else {
+            foreach ($text as $keyText => $oneText) {
+                // Is numeric?
+                if (!is_string($oneText) || is_numeric($oneText) || strlen($oneText) < 2) {
+                    // Remove from list translate
+                    unset($text[$keyText]);
+                }
             }
         }
         // No text valid?
@@ -300,15 +302,24 @@ class GoogleTranslate {
 
         // Text must be smaller than 5K chars
         if (isset($this->parameters['q'])) {
-            $text_len = strlen($this->parameters['q']);
-            if ($text_len > 5000) {
-                throw new GoogleTranslateException("Can't translate more than 5K chars.");
+            if (is_array($this->parameters['q'])) {
+                foreach ($this->parameters['q'] as $text) {
+                    $text_len = strlen($text);
+                    if ($text_len > 5000) {
+                        throw new GoogleTranslateException("Can't translate more than 5K chars for every texts.");
+                    }
+                }
+            } else {
+                $text_len = strlen($this->parameters['q']);
+                if ($text_len > 5000) {
+                    throw new GoogleTranslateException("Can't translate more than 5K chars.");
+                }
             }
         }
 
         // If GET url is longer than 2K char, request must be POST
         if (!empty($this->parameters)) {
-            $query = http_build_query($this->parameters);
+            $query = $this->http_build_query();
             if (strlen($url . '?' . $query) < 2000) {
                 // Init curl as GET request with http query parameters
                 $url .= '?' . $query;
@@ -336,6 +347,31 @@ class GoogleTranslate {
     }
 
     /**
+     * Build query url
+     * @return type
+     */
+    private function http_build_query() {
+        //add for each item
+        $query_parts = array();
+        foreach ($this->parameters as $keyParam => $param) {
+            switch ($keyParam) {
+                case 'q':
+                    if (is_array($param)) {
+                        foreach ($param as $subParam) {
+                            $query_parts[] = 'q=' . urlencode($subParam);
+                        }
+                    } else {
+                        $query_parts[] = 'q=' . urlencode($param);
+                    }
+                    break;
+                default:
+                    $query_parts[] = urlencode($keyParam) . '=' . urlencode($param);
+            }
+        }
+        return implode('&', $query_parts);
+    }
+
+    /**
      * Add Query parameters for the API request (on $this->paramters)
      * @param type $key
      * @param type $value
@@ -343,14 +379,15 @@ class GoogleTranslate {
     private function addQueryParam($key, $value) {
         // Remove possible whitespaces, utf8 encode AND add to params list
         if (is_array($value)) {
-            foreach ($value as $keyValue => $itemValue) {
-                $value[$keyValue] = utf8_encode($itemValue);
+            foreach ($value as $valKey => $itemValue) {
+                $value[$valKey] = utf8_encode($itemValue);
             }
         } else {
             $value = utf8_encode($value);
         }
         // Add to param list
-        $this->parameters[utf8_encode(str_replace(' ', '', $key))] = $value;
+        $cleanKey = utf8_encode(str_replace(' ', '', $key));
+        $this->parameters[$cleanKey] = $value;
     }
 
     /**
@@ -394,6 +431,8 @@ class GoogleTranslate {
 }
 
 class GoogleTranslateException extends Exception {
+
+    public $message;
 
     function __construct($message, $code = null, $previus = null) {
         parent::__construct($message, $code, $previus);

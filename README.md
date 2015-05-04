@@ -18,7 +18,10 @@ try {
     $text = 'Post emensos insuperabilis expeditionis eventus languentibus partium animis, quas periculorum varietas fregerat et laborum, nondum tubarum cessante clangore vel milite locato per stationes hibernas, fortunae saevientis procellae tempestates alias rebus infudere communibus per multa illa et dira facinora Caesaris Galli, qui ex squalore imo miseriarum in aetatis adultae primitiis ad principale culmen insperato saltu provectus ultra terminos potestatis delatae procurrens asperitate nimia cuncta foedabat. Propinquitate enim regiae stirpis gentilitateque etiam tum Constantini nominis efferebatur in fastus, si plus valuisset, ausurus hostilia in auctorem suae felicitatis, ut videbatur.';
     
     // Translate latin to english
-    $translated_text = $GT->translate($text, 'en', 'la');
+    $translateTo = 'en';
+    $translateFrom = 'la'; // If not set or null, will be set to the decoded languages during translations
+    // Translate latin to english
+    $translated_text = $GT->translate($text, $translateTo, $translateFrom);
     
     echo "Galli Caesaris saevitia<br/>" . $translated_text;
 
