@@ -2,7 +2,7 @@
 
 Improvement made to [https://github.com/viniciusgava/Google-Translate-API](iniciusgava's Google-Translate-API) library.
 
-Please note that to use Google Translate APIs you have to activate billing in your project and use an API key (these are paid APIs!).
+Please note that to use Google Translate APIs you have to activate billing in your project (these are paid APIs!) and use an API key.
 
 #### Usage
 
@@ -15,11 +15,11 @@ try {
     $GT = new GoogleTranslate('YOUR_VALID_API_KEY');
 
     // Galli Caesaris saevitia @ http://www.thelatinlibrary.com/ammianus/14.shtml
-    $text = 'Post emensos insuperabilis expeditionis eventus languentibus partium animis, quas periculorum varietas fregerat et laborum, nondum tubarum cessante clangore vel milite locato per stationes hibernas, fortunae saevientis procellae tempestates alias rebus infudere communibus per multa illa et dira facinora Caesaris Galli, qui ex squalore imo miseriarum in aetatis adultae primitiis ad principale culmen insperato saltu provectus ultra terminos potestatis delatae procurrens asperitate nimia cuncta foedabat. Propinquitate enim regiae stirpis gentilitateque etiam tum Constantini nominis efferebatur in fastus, si plus valuisset, ausurus hostilia in auctorem suae felicitatis, ut videbatur.';
+    $text = 'Post emensos insuperabilis expeditionis eventus languentibus partium animis, quas periculorum varietas fregerat et laborum, nondum tubarum cessante clangore vel milite locato per stationes hibernas...';
     
     // Translate latin to english
     $translateTo = 'en';
-    $translateFrom = 'la'; // If not set or null, will be set to the decoded languages during translations
+    $translateFrom = 'la'; // If not set or null, will be set to the decoded languages during translationW
     // Translate latin to english
     $translated_text = $GT->translate($text, $translateTo, $translateFrom);
     
