@@ -50,6 +50,16 @@ class GoogleTranslate {
      */
     CONST SERVICE_LANGUAGE = 'language';
 
+    /**
+     * Text is html. Used in "translate" method.
+     */
+    CONST HTML_FORMAT = 'html';
+
+    /**
+     * Text is plaintext.USed in "translate" method.
+     */
+    CONST PLAINTEXT_FORMAT = 'text';
+
     public function __construct($accessKey) {
         $this->setAccessKey($accessKey);
     }
@@ -71,9 +81,10 @@ class GoogleTranslate {
      * @param string|array $text The text to be translated
      * @param string $targetLanguage The language to translate the source text into
      * @param string|null|array $sourceLanguage The language of the source text. If a language is not specified, the system will attempt to identify the source language automatically
+     * @param string $format    Format of the text to translate: 'html' or 'text'. Default to 'html'.
      * @return text|array|false
      */
-    public function translate($text, $targetLanguage, &$sourceLanguage = null) {
+    public function translate($text, $targetLanguage, &$sourceLanguage = null, $format = self::HTML_FORMAT) {
         if ($this->isValid($text, $targetLanguage, $sourceLanguage)) {
             // Add keyAccess
             $this->addQueryParam('key', $this->accessKey);
@@ -84,6 +95,14 @@ class GoogleTranslate {
             // If source not null, add param to query
             if (!is_null($sourceLanguage)) {
                 $this->addQueryParam('source', $sourceLanguage);
+            }
+            // Text format, defaults to html
+            switch ($format) {
+                default:
+                    $format = self::HTML_FORMAT;
+                case self::HTML_FORMAT:
+                case self::PLAINTEXT_FORMAT:
+                    $this->addQueryParam('format', $format);
             }
             // Init connect
             $this->initConnect();
