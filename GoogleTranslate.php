@@ -336,6 +336,10 @@ class GoogleTranslate {
             }
         }
 
+        if (!isset($this->parameters['prettyprint'])) {
+            $this->addQueryParam('prettyprint', false);
+        }
+
         // If GET url is longer than 2K char, request must be POST
         if (!empty($this->parameters)) {
             $query = $this->http_build_query();
