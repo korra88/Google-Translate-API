@@ -72,7 +72,7 @@ class GoogleTranslate {
         if (strlen($key) == 39) {
             $this->accessKey = $key;
         } else {
-            throw new GoogleTranslateException("Invalid Access Key");
+            throw new GoogleTranslateException("Invalid Access Key", 1);
         }
     }
 
@@ -297,14 +297,14 @@ class GoogleTranslate {
     private function initConnect($service = self::SERVICE_TRANSLATE) {
         // Without API key nothing can be done!
         if (!isset($this->parameters['key'])) {
-            throw new GoogleTranslateException('Missing API key ("key").');
+            throw new GoogleTranslateException('Missing API key ("key").', 2);
         }
         // Choose service
         switch ($service) {
             case self::SERVICE_DETECT:
                 $url = $this->apiUri . '/detect';
                 if (!isset($this->parameters['q'])) {
-                    throw new GoogleTranslateException('Missing one or more required parameters ("q").');
+                    throw new GoogleTranslateException('Missing one or more required parameters ("q").', 3);
                 }
                 break;
             case self::SERVICE_LANGUAGE:
@@ -315,7 +315,7 @@ class GoogleTranslate {
                 $url = $this->apiUri;
                 // Check mandatory parameters
                 if (!isset($this->parameters['q']) || !isset($this->parameters['target'])) {
-                    throw new GoogleTranslateException('Missing one or more required parameters ("q", "target").');
+                    throw new GoogleTranslateException('Missing one or more required parameters ("q", "target").', 3);
                 }
         }
 
@@ -325,13 +325,13 @@ class GoogleTranslate {
                 foreach ($this->parameters['q'] as $text) {
                     $text_len = strlen($text);
                     if ($text_len > 5000) {
-                        throw new GoogleTranslateException("Can't translate more than 5K chars for every texts.");
+                        throw new GoogleTranslateException("Can't translate more than 5K chars for every texts.", 5);
                     }
                 }
             } else {
                 $text_len = strlen($this->parameters['q']);
                 if ($text_len > 5000) {
-                    throw new GoogleTranslateException("Can't translate more than 5K chars.");
+                    throw new GoogleTranslateException("Can't translate more than 5K chars.", 5);
                 }
             }
         }
@@ -447,7 +447,7 @@ class GoogleTranslate {
             return $result->data;
         } else {
             // Invalid key
-            throw new GoogleTranslateException("Invalid Access Key");
+            throw new GoogleTranslateException("Invalid Access Key", 1);
         }
     }
 
@@ -456,6 +456,7 @@ class GoogleTranslate {
 class GoogleTranslateException extends Exception {
 
     public $message;
+    public $code;
 
     function __construct($message, $code = null, $previus = null) {
         parent::__construct($message, $code, $previus);
