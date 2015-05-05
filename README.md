@@ -12,18 +12,21 @@ Translation:
 require_once '/path/to/GoogleTranslate.php';
 
 try {
-    $GT = new GoogleTranslate('YOUR_VALID_API_KEY');
+    $GT = new GoogleTranslate('YOUR_API_KEY');
 
     // Galli Caesaris saevitia @ http://www.thelatinlibrary.com/ammianus/14.shtml
-    $text = 'Post emensos insuperabilis expeditionis eventus languentibus partium animis, quas periculorum varietas fregerat et laborum, nondum tubarum cessante clangore vel milite locato per stationes hibernas...';
+    $text = 'Post emensos insuperabilis expeditionis eventus languentibus partium'
+            . ' animis, quas periculorum varietas fregerat et laborum...';
     
     // Translate latin to english
     $translateTo = 'en';
-    $translateFrom = 'la'; // If not set or null, will be set to the decoded languages during translationW
-    // Translate latin to english
+    $translateFrom = 'la';
+    // If $translateFrom is not set or null, it's value will be set to the
+    // decoded languages during translation
+    
     $translated_text = $GT->translate($text, $translateTo, $translateFrom);
     
-    echo "Galli Caesaris saevitia<br/>" . $translated_text;
+    echo "Galli Caesaris saevitia<br/>" . html_entity_decode($translated_text);
 
 } catch (GoogleTranslateException $e) {
     echo "Error: " . $e->message;
