@@ -150,10 +150,9 @@ class GoogleTranslate {
     /**
      * Deletect Language
      * @param string|array $text The text or list the text to be detect
-     * @param null|string|array $isReliable is reliable
      * @return string|array language or list of language detected
      */
-    public function detect($text, &$isReliable = null) {
+    public function detect($text) {
         if ($this->isValid($text, null, null, false)) {
             reset($text);
 
@@ -171,26 +170,19 @@ class GoogleTranslate {
             if (count($result->detections) == 1) {
                 // Get only info necessary
                 $result = current(current($result->detections));
-                // Return by reference the language is realiable
-                $isReliable = $result->isReliable;
                 // Return translate
                 return $result->language;
             } else {
                 // This is multiple text
                 // Get only info necessary
                 $result = $result->detections;
-                // Save is reliable list
-                $arrIsReliable = array();
                 // Save detect language list
                 $arrSourceReturn = array();
                 // Get translates
                 foreach ($result as $itemResult) {
                     $itemResult = current($itemResult);
-                    $arrIsReliable[] = $itemResult->isReliable;
                     $arrSourceReturn[] = $itemResult->language;
                 }
-                // Return by reference the language is realiable
-                $isReliable = $arrIsReliable;
                 // Return list of detect language
                 return $arrSourceReturn;
             }
