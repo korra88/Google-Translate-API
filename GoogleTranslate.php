@@ -15,7 +15,7 @@ class GoogleTranslate {
      * URI API
      * @var string
      */
-    private $apiUri = 'https://Www.googleapis.com/language/translate/v2';
+    private $apiUri = 'https://www.googleapis.com/language/translate/v2';
 
     /**
      * Access Key to API
@@ -438,8 +438,8 @@ class GoogleTranslate {
             // Request ok, return data
             return $result->data;
         } else {
-            // Invalid key
-            throw new GoogleTranslateException("Invalid Access Key", 1);
+            // Invalid key?
+            throw new GoogleTranslateException($result->error->message, $result->error->code, null, array('info' => $arrInfo, 'parameters' => $this->parameters, 'response' => $result));
         }
     }
 
@@ -449,8 +449,10 @@ class GoogleTranslateException extends Exception {
 
     public $message;
     public $code;
+    public $stack;
 
-    function __construct($message, $code = null, $previus = null) {
+    function __construct($message, $code = null, $previus = null, $var_to_dump = null) {
+        $this->stack = $var_to_dump;
         parent::__construct($message, $code, $previus);
     }
 
