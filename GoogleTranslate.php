@@ -149,10 +149,12 @@ class GoogleTranslate {
 
     /**
      * Deletect Language
+     * Edited by Emanuele Corradini: added $best_bet parameter
      * @param string|array $text The text or list the text to be detect
+     * @param boolean $best_bet     Whether to pass only the language with higher confidence instead of an array of languages
      * @return string|array language or list of language detected
      */
-    public function detect($text) {
+    public function detect($text, $best_bet = false) {
         if ($this->isValid($text, null, null, false)) {
             reset($text);
 
@@ -172,6 +174,17 @@ class GoogleTranslate {
                 $result = current(current($result->detections));
                 // Return translate
                 return $result->language;
+            } elseif ($best_bet) {
+                // Edit by Emanuele Corradini, 2015-08-04
+                $best_bet_stat = 0;
+                $language = null;
+                foreach ($result->detections as $itemResult) {
+                    if ($itemResult->confidence > $best_bet_stat) {
+                        $best_bet_stat = $itemResult->confidence;
+                        $language = $itemResult->language;
+                    }
+                }
+                return $language;
             } else {
                 // This is multiple text
                 // Get only info necessary
