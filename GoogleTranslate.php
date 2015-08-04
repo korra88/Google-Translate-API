@@ -156,8 +156,6 @@ class GoogleTranslate {
      */
     public function detect($text, $best_bet = false) {
         if ($this->isValid($text, null, null, false)) {
-            reset($text);
-
             // Add keyAccess
             $this->addQueryParam('key', $this->accessKey);
             // Add text to be translate
